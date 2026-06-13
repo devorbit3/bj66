@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Người dùng mới tại Việt Nam có thể bắt đầu kiếm phần thưởng từ trò chơi di động như thế nào?</title>
+    <style>
+        /* ----------------------------------
+           CSS VARIABLES (GIAO DIỆN SÁNG/TỐI)
+        ----------------------------------- */
+        :root {
+            --bg-color: #f4f7f6;
+            --text-color: #333333;
+            --heading-color: #1a56db; 
+            --card-bg: #ffffff;
+            --link-color: #ff0055; 
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition-speed: 0.4s;
+            --border-color: #e5e7eb;
+            --faq-hover: rgba(0,0,0,0.02);
+            --contact-bg: rgba(255, 0, 85, 0.05); /* Highlight box background */
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #d1d5db;
+            --heading-color: #60a5fa; 
+            --card-bg: #1f2937;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --border-color: #374151;
+            --faq-hover: rgba(255,255,255,0.05);
+            --contact-bg: rgba(255, 0, 85, 0.1);
+        }
+
+        /* ----------------------------------
+           RESET & TYPOGRAPHY
+        ----------------------------------- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.75;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        h1, h2, h3 {
+            color: var(--heading-color);
+            margin-bottom: 15px;
+            font-weight: 700;
+            line-height: 1.3;
+            transition: color var(--transition-speed);
+        }
+
+        h1 { font-size: 2.2rem; margin-bottom: 25px; }
+        h2 { font-size: 1.8rem; margin-top: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 12px;}
+        h3 { font-size: 1.3rem; margin-top: 25px; }
+        p { margin-bottom: 16px; font-size: 1.05rem; }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            color: #d40047;
+            text-decoration: underline;
+        }
+
+        /* ----------------------------------
+           BỐ CỤC CHÍNH (LAYOUT & CARDS)
+        ----------------------------------- */
+        .container {
+            max-width: 900px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+            transition: transform 0.4s ease, background-color var(--transition-speed), box-shadow var(--transition-speed);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        /* ----------------------------------
+           HOVER-TO-OPEN FAQS
+        ----------------------------------- */
+        .faq-item {
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            overflow: hidden;
+            transition: background-color var(--transition-speed);
+        }
+
+        .faq-question {
+            padding: 18px 20px;
+            margin: 0;
+            font-size: 1.15rem;
+            cursor: default;
+            color: var(--heading-color);
+            background-color: transparent;
+            transition: background-color 0.3s;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            opacity: 0;
+            padding: 0 20px;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.5s ease, padding 0.5s ease;
+        }
+
+        .faq-item:hover .faq-answer {
+            max-height: 400px; 
+            opacity: 1;
+            padding: 15px 20px 20px 20px;
+        }
+        
+        .faq-item:hover .faq-question {
+            background-color: var(--faq-hover);
+        }
+
+        /* ----------------------------------
+           UI CONTROLS & NÚT
+        ----------------------------------- */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background-color: var(--link-color);
+            width: 0%;
+            z-index: 9999;
+            transition: width 0.1s ease-out;
+        }
+
+        #theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        #theme-toggle:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+            transform: scale(1.05);
+        }
+
+        #back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background-color: var(--link-color);
+            color: white;
+            border: none;
+            font-size: 26px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        #back-to-top:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Thanh tiến trình đọc -->
+    <div id="progress-bar"></div>
+
+    <!-- Nút Dark Mode -->
+    <button id="theme-toggle">🌙 Chế độ Tối</button>
+
+    <div class="container">
+        
+        <!-- Khối Giới Thiệu -->
+        <div class="card">
+            <h1>Người dùng mới tại Việt Nam có thể bắt đầu kiếm phần thưởng từ trò chơi di động như thế nào?</h1>
+            <p>Nhiều người chơi game di động mới tại Việt Nam quan tâm đến các cơ hội chơi game dựa trên phần thưởng nhưng thường cảm thấy khó hiểu cách thức hoạt động của các hệ thống phần thưởng. Các khái niệm như yêu cầu tham gia, điều kiện đủ để nhận phần thưởng, theo dõi tiến trình và các ưu đãi dựa trên hoạt động có thể có vẻ phức tạp khi người dùng mới tham gia nền tảng. Nếu không hiểu rõ những cơ chế này, người mới bắt đầu có thể bỏ qua những cơ hội giá trị và gặp khó khăn trong việc tận dụng tối đa các phần thưởng sẵn có.</p>
+            <p>Việc tìm hiểu các nguyên tắc cơ bản của trò chơi phần thưởng có thể làm cho trải nghiệm trở nên dễ dàng và thú vị hơn nhiều. Bằng cách hiểu các yêu cầu thiết lập tài khoản, cấu trúc phần thưởng, cơ hội tham gia hàng ngày và các chiến lược tương tác hiệu quả, người dùng mới có thể cải thiện cơ hội kiếm phần thưởng một cách nhất quán. Bài viết này khám phá các khái niệm thiết yếu mà mọi người mới bắt đầu nên biết và giải thích các cách thiết thực để tham gia hiệu quả hơn. Với kiến thức đúng đắn, người dùng có thể xây dựng sự tự tin, tránh những sai lầm phổ biến và phát triển sự hiểu biết sâu sắc hơn về trò chơi di động dựa trên phần thưởng.</p>
+        </div>
+
+        <div class="card">
+            <h2>Hiểu cách hoạt động của hệ thống phần thưởng trong trò chơi di động</h2>
+            
+            <h3>Phần thưởng chơi game di động là gì?</h3>
+            <p>Các hệ thống phần thưởng Chơi game Di động được thiết kế để khuyến khích sự tham gia và tương tác thông qua các ưu đãi khác nhau. Những Phần thưởng Kỹ thuật số này thường được kết nối với các hoạt động, thành tích, cột mốc của người dùng và sự tương tác liên tục với nền tảng.</p>
+            
+            <h3>Các loại phần thưởng phổ biến</h3>
+            <p>Các nền tảng khác nhau có thể cung cấp nhiều loại phần thưởng, bao gồm phần thưởng hàng ngày, ưu đãi dựa trên thành tích, lợi ích khách hàng thân thiết và tiền thưởng tham gia. Các danh mục phần thưởng này thường được cấu trúc để khuyến khích sự tham gia nhất quán theo thời gian.</p>
+            
+            <h3>Tại sao việc hiểu các cấu trúc phần thưởng lại quan trọng</h3>
+            <p>Sự hiểu biết rõ ràng về Hệ thống Phần thưởng giúp người dùng đưa ra các quyết định tham gia tốt hơn và xác định các cơ hội hiệu quả hơn. Các yếu tố Trò chơi hóa như theo dõi tiến trình, các cột mốc và mục tiêu hoạt động trở nên dễ điều hướng hơn khi người chơi hiểu cách phần thưởng được kiếm và quản lý. Kiến thức này cũng cải thiện việc theo dõi phần thưởng và giúp người mới bắt đầu tối đa hóa trải nghiệm chơi game tổng thể của họ.</p>
+        </div>
+
+        <div class="card">
+            <h2>Tạo và xác minh tài khoản một cách chính xác</h2>
+            
+            <h3>Tại sao việc thiết lập tài khoản lại quan trọng</h3>
+            <p>Tạo một Tài khoản Người dùng hoàn chỉnh là bước đầu tiên để tham gia vào trò chơi di động dựa trên phần thưởng. Thiết lập tài khoản đúng cách cung cấp quyền truy cập vào các tính năng nền tảng, công cụ theo dõi tiến trình và các cơ hội phần thưởng. Nó cũng giúp đảm bảo rằng người dùng đáp ứng các yêu cầu cơ bản cần thiết cho điều kiện nhận phần thưởng.</p>
+            
+            <h3>Hoàn thành các yêu cầu xác minh</h3>
+            <p>Nhiều nền tảng sử dụng các quy trình Xác minh Tài khoản để xác nhận thông tin người dùng và duy trì bảo mật nền tảng. Việc xác minh có thể bao gồm xác nhận danh tính, xác thực liên hệ hoặc các biện pháp Xác thực Người dùng khác. Những quá trình này giúp hỗ trợ Tuân thủ Bảo mật và đảm bảo sự tham gia công bằng trên toàn nền tảng.</p>
+            
+            <h3>Những sai lầm đăng ký phổ biến</h3>
+            <p>Người mới bắt đầu thường gặp sự cố do hồ sơ không đầy đủ hoặc thông tin không chính xác trong quá trình đăng ký. Việc thiếu các thông tin chi tiết có thể tạo ra khó khăn về sau khi truy cập các tính năng hoặc đủ điều kiện nhận các cơ hội phần thưởng nhất định. Dành thời gian để hoàn thành thiết lập tài khoản một cách chính xác giúp tránh những rắc rối không cần thiết.</p>
+        </div>
+
+        <div class="card">
+            <h2>Tìm hiểu những cách chính để kiếm phần thưởng</h2>
+            
+            <h3>Các hoạt động và nhiệm vụ hàng ngày</h3>
+            <p>Nhiệm vụ Hàng ngày là một trong những cách phổ biến nhất để người dùng kiếm phần thưởng. Sự tham gia thường xuyên khuyến khích tính nhất quán và giúp người chơi xây dựng sự tiến bộ vững chắc theo thời gian.</p>
+            
+            <h3>Tiến trình dựa trên thành tích</h3>
+            <p>Nhiều hệ thống phần thưởng bao gồm các tính năng Theo dõi Thành tích ghi nhận việc hoàn thành các cột mốc và thành tựu của người dùng. Các hệ thống này thường khen thưởng sự nỗ lực liên tục và sự tiến bộ có thể đo lường được.</p>
+            
+            <h3>Các sự kiện và chiến dịch khuyến mãi</h3>
+            <p>Các Chiến dịch Khuyến mãi cung cấp các cơ hội có thời hạn có thể mang lại các ưu đãi bổ sung cho việc tham gia. Các sự kiện đặc biệt thường khuyến khích người dùng tham gia vào các hoạt động và thử thách mới.</p>
+            
+            <h3>Tại sao sự tương tác tích cực lại quan trọng</h3>
+            <p>Tương tác Người dùng nhất quán giúp tăng cường khả năng hiển thị đối với các cơ hội sẵn có và hỗ trợ sự thăng tiến dài hạn. Sự tham gia tích cực thường tạo ra nhiều cơ hội hơn để kiếm phần thưởng và hưởng lợi từ các tính năng nền tảng.</p>
+        </div>
+
+        <div class="card">
+            <h2>Xây dựng chiến lược kiếm phần thưởng nhất quán</h2>
+            
+            <h3>Đặt mục tiêu tham gia</h3>
+            <p>Thiết lập các mục tiêu tham gia rõ ràng giúp người dùng phát triển các thói quen hiệu quả và duy trì sự tiến bộ vững chắc. Các mục tiêu tương tác hàng ngày có thể làm cho việc kiếm phần thưởng trở nên có tổ chức và dễ quản lý hơn.</p>
+            
+            <h3>Theo dõi các cơ hội phần thưởng</h3>
+            <p>Theo dõi Phần thưởng hiệu quả cho phép người dùng giám sát các ưu đãi sẵn có, yêu cầu hoạt động và các cơ hội đang diễn ra. Chú ý đến các Chỉ số Tham gia giúp người dùng xác định những hoạt động nào đóng góp nhiều nhất vào tiến trình.</p>
+            
+            <h3>Quản lý thời gian hiệu quả</h3>
+            <p>Ưu tiên các nhiệm vụ quan trọng và sắp xếp các hoạt động chơi game có thể làm giảm các cơ hội bị bỏ lỡ. Việc lập kế hoạch hiệu quả giúp người dùng tập trung vào các hoạt động phù hợp với mục tiêu và thời gian rảnh rỗi của họ.</p>
+            
+            <h3>Các thảo luận cộng đồng về trò chơi phần thưởng</h3>
+            <p>Nhiều người chơi chia sẻ kinh nghiệm và chiến lược thông qua các cộng đồng chơi game và các nhóm thảo luận. Các nền tảng như <a href="https://bj66.org/" target="_blank">BJ66</a> đôi khi được nhắc đến trong các cuộc trò chuyện về hệ thống phần thưởng, phương thức tham gia và thực tiễn Giám sát Hoạt động. Những cuộc thảo luận này có thể cung cấp những hiểu biết hữu ích về các cách tiếp cận trò chơi phần thưởng phổ biến và trải nghiệm của người dùng.</p>
+            <p>Khả năng Giữ chân Người dùng mạnh mẽ thường đến từ sự tham gia nhất quán, thói quen tham gia có tổ chức và sự hiểu biết rõ ràng về các cơ hội phần thưởng sẵn có.</p>
+        </div>
+
+        <div class="card">
+            <h2>Hiểu các điều kiện đủ để nhận phần thưởng và quy định của nền tảng</h2>
+            
+            <h3>Các yêu cầu về trình độ chuyên môn</h3>
+            <p>Hầu hết các nền tảng phần thưởng thiết lập các tiêu chuẩn Điều kiện Phần thưởng cụ thể mà người dùng phải đáp ứng trước khi đủ tiêu chuẩn nhận ưu đãi. Các yêu cầu này có thể bao gồm ngưỡng tham gia, mức độ hoạt động và tiêu chí tương tác. Việc hiểu những kỳ vọng này giúp người dùng tập trung vào các hoạt động đóng góp vào điều kiện nhận phần thưởng.</p>
+            
+            <h3>Đọc các điều khoản và điều kiện</h3>
+            <p>Nhiều người mới bắt đầu bỏ qua các chi tiết quan trọng có trong các nguyên tắc nền tảng và tài liệu phần thưởng. Việc xem xét các Chính sách Nền tảng, Hướng dẫn Người dùng và thông tin liên quan đến phần thưởng giúp người dùng hiểu các kỳ vọng tham gia, tiêu chuẩn đủ điều kiện và yêu cầu hoạt động.</p>
+            
+            <h3>Tại sao việc tuân thủ lại quan trọng</h3>
+            <p>Việc tuân theo các Quy tắc Tham gia hỗ trợ sự tham gia công bằng và giúp đảm bảo rằng các phần thưởng được phân phối theo các tiêu chí đã thiết lập. Tuân thủ cũng làm giảm rủi ro hiểu lầm trong quá trình phê duyệt phần thưởng và giúp người dùng duy trì quyền truy cập vào các cơ hội có sẵn.</p>
+        </div>
+
+        <div class="card">
+            <h2>Những sai lầm phổ biến người dùng mới nên tránh</h2>
+            
+            <h3>Bỏ qua các yêu cầu phần thưởng</h3>
+            <p>Việc không xem xét các điều kiện đủ tiêu chuẩn có thể dẫn đến việc bỏ lỡ các cơ hội và những nỗ lực tham gia không thành công.</p>
+            
+            <h3>Bỏ qua các bước xác minh</h3>
+            <p>Việc xác minh tài khoản không đầy đủ có thể ảnh hưởng đến quyền truy cập vào phần thưởng và các tính năng của nền tảng.</p>
+            
+            <h3>Bỏ lỡ các cơ hội hàng ngày</h3>
+            <p>Bỏ qua các hoạt động thường nhật có thể làm giảm tiến độ và hạn chế khả năng tích lũy phần thưởng tiềm năng.</p>
+            
+            <h3>Không theo dõi tiến trình</h3>
+            <p>Thói quen Theo dõi Phần thưởng kém khiến việc giám sát thành tích và xác định các cơ hội có sẵn trở nên khó khăn.</p>
+            
+            <h3>Hiểu sai các chính sách phần thưởng</h3>
+            <p>Các giả định không chính xác về quy tắc nền tảng có thể dẫn đến Lỗi Tham gia và Quản lý Tài khoản không hiệu quả. Hiểu các mô hình Hành vi Người dùng và kỳ vọng của nền tảng giúp người dùng tham gia hiệu quả hơn.</p>
+        </div>
+
+        <div class="card">
+            <h2>Các công cụ giúp người dùng giám sát phần thưởng hiệu quả hơn</h2>
+            
+            <h3>Bảng điều khiển phần thưởng</h3>
+            <p>Bảng điều khiển Người dùng cung cấp một góc nhìn tập trung về các phần thưởng đã kiếm được, trạng thái tham gia và hoạt động tài khoản.</p>
+            
+            <h3>Các tính năng theo dõi tiến trình</h3>
+            <p>Các công cụ Giám sát Tiến trình giúp người dùng theo dõi các cột mốc, thành tựu và các mục tiêu đang diễn ra.</p>
+            
+            <h3>Thông báo và cảnh báo</h3>
+            <p>Thông báo cung cấp các cập nhật kịp thời về các hoạt động, phần thưởng và các diễn biến nền tảng quan trọng.</p>
+            
+            <h3>Nhật ký lịch sử hoạt động</h3>
+            <p>Các hồ sơ lịch sử cho phép người dùng xem lại sự tham gia trước đó và giám sát các hoạt động đã hoàn thành.</p>
+            
+            <h3>Các công cụ giám sát hiệu suất</h3>
+            <p>Các tính năng Theo dõi Kỹ thuật số giúp người dùng phân tích các mô hình tham gia và duy trì khả năng hiển thị tốt hơn đối với tiến trình và các cơ hội liên quan đến phần thưởng.</p>
+        </div>
+
+        <div class="card">
+            <h2>Các phương pháp hay nhất để thành công với phần thưởng dài hạn</h2>
+            
+            <h3>Giữ hoạt động nhất quán</h3>
+            <p>Sự tham gia thường xuyên giúp người dùng duy trì tiến độ vững chắc và luôn đủ điều kiện nhận các cơ hội phần thưởng đang diễn ra.</p>
+            
+            <h3>Giám sát các cập nhật phần thưởng</h3>
+            <p>Theo dõi các bản cập nhật liên quan đến phần thưởng giúp người dùng xác định các cơ hội mới và những thay đổi quan trọng.</p>
+            
+            <h3>Theo dõi các thông báo của nền tảng</h3>
+            <p>Các thông báo chính thức thường cung cấp thông tin giá trị về các hoạt động, chính sách và sự kiện khuyến mãi.</p>
+            
+            <h3>Hoàn thành các hoạt động thường xuyên</h3>
+            <p>Việc hoàn thành nhất quán các nhiệm vụ và mục tiêu sẵn có hỗ trợ sự tiến bộ và tương tác dài hạn.</p>
+            
+            <h3>Xem lại tiến trình thường xuyên</h3>
+            <p>Các bài đánh giá tiến độ thường xuyên giúp người dùng đánh giá hiệu suất, giám sát thành tích và điều chỉnh chiến lược tham gia khi cần thiết.</p>
+        </div>
+
+        <div class="card">
+            <h2>Xây dựng nền tảng vững chắc để thành công với phần thưởng</h2>
+            <p>Người dùng mới có thể cải thiện tiềm năng kiếm phần thưởng của mình bằng cách hiểu hệ thống phần thưởng, tuân theo các yêu cầu tham gia và phát triển thói quen tương tác nhất quán. Việc theo dõi phần thưởng hiệu quả và tham gia hoạt động thường xuyên giúp tạo ra các cơ hội dài hạn tốt hơn. Bằng cách tập trung vào việc tìm hiểu các cơ chế nền tảng và duy trì các thói quen tham gia bền vững, người mới bắt đầu có thể xây dựng sự tự tin và tối đa hóa trải nghiệm chơi game phần thưởng tổng thể của họ.</p>
+        </div>
+
+        <!-- Khối FAQs dạng Accordion -->
+        <div class="card">
+            <h2>Câu hỏi thường gặp (FAQs)</h2>
+
+            <div class="faq-item">
+                <h3 class="faq-question">Làm thế nào để người mới bắt đầu kiếm phần thưởng từ các trò chơi di động?</h3>
+                <div class="faq-answer">
+                    <p>Người mới bắt đầu nên tạo và xác minh tài khoản của mình, tìm hiểu cách hoạt động của hệ thống phần thưởng và tham gia vào các hoạt động có sẵn một cách nhất quán.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <h3 class="faq-question">Tại sao việc xác minh tài khoản lại quan trọng?</h3>
+                <div class="faq-answer">
+                    <p>Xác minh giúp xác nhận tính xác thực của tài khoản, hỗ trợ bảo mật nền tảng và có thể được yêu cầu để đủ điều kiện nhận phần thưởng.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <h3 class="faq-question">Những cách phổ biến nhất để kiếm phần thưởng là gì?</h3>
+                <div class="faq-answer">
+                    <p>Nhiệm vụ hàng ngày, cột mốc thành tựu, chiến dịch khuyến mãi và các hoạt động tham gia liên tục là các nguồn phần thưởng phổ biến.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <h3 class="faq-question">Người dùng có thể theo dõi tiến độ phần thưởng như thế nào?</h3>
+                <div class="faq-answer">
+                    <p>Người dùng có thể giám sát bảng điều khiển, công cụ theo dõi tiến trình, thông báo và nhật ký lịch sử hoạt động để luôn được cập nhật về tiến độ của họ.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <h3 class="faq-question">Người mới bắt đầu nên tránh những sai lầm nào?</h3>
+                <div class="faq-answer">
+                    <p>Những sai lầm phổ biến bao gồm bỏ qua xác minh, bỏ qua yêu cầu phần thưởng, bỏ lỡ các hoạt động hàng ngày và không theo dõi tiến trình.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <h3 class="faq-question">Người chơi có thể cải thiện các cơ hội phần thưởng dài hạn như thế nào?</h3>
+                <div class="faq-answer">
+                    <p>Việc tham gia nhất quán, đánh giá tiến độ thường xuyên, luôn cập nhật thông tin và tuân theo hướng dẫn nền tảng có thể hỗ trợ sự thành công của phần thưởng dài hạn.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Nút Lên Đầu Trang -->
+    <button id="back-to-top" title="Lên đầu trang">↑</button>
+
+    <script>
+        // 1. Reading Progress Bar & Back to Top visibility
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+            document.getElementById('progress-bar').style.width = scrollPercent + '%';
+            
+            const backToTopBtn = document.getElementById('back-to-top');
+            if (scrollTop > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+
+        // 2. Smooth Scroll to Top
+        document.getElementById('back-to-top').addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 3. Dark Mode Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            if (htmlElement.getAttribute('data-theme') === 'dark') {
+                htmlElement.removeAttribute('data-theme');
+                themeToggle.innerText = '🌙 Chế độ Tối';
+            } else {
+                htmlElement.setAttribute('data-theme', 'dark');
+                themeToggle.innerText = '☀️ Chế độ Sáng';
+            }
+        });
+
+        // 4. Scroll Reveal Animation using Intersection Observer
+        const cards = document.querySelectorAll('.card');
+        
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -40px 0px"
+        };
+
+        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        cards.forEach(card => {
+            revealOnScroll.observe(card);
+        });
+        
+        // Trigger initial reveal on load
+        setTimeout(() => window.dispatchEvent(new Event('scroll')), 100);
+    </script>
+</body>
+</html>
